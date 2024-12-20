@@ -21,14 +21,9 @@ def order_create(request):
                 )
             cart.clear()
             order_created.delay(order.id)
-
-        return redirect(f"/orders/created/{order.id}/")
+            request.session["order_id"] = str(order.id)
+            return redirect("payment:process")
     else:
         form = OrderCreateForm()
 
     return render(request, "orders/order/create.html", {"cart": cart, "form": form})
-
-
-def order_created_view(request, order_id):
-    order = Order.objects.get(id=order_id)
-    return render(request, "orders/order/created.html", {"order": order})
